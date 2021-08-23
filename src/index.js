@@ -4,7 +4,7 @@ import Phaser from 'phaser';
 //import logoImg from './assets/logo.png';
 import spriteSheetImg from './assets/Frogger.png';
 
-class MyGame extends Phaser.Scene
+class MyGame extends Phaser.scene
 {
     constructor ()
     {
