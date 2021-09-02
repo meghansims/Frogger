@@ -34,7 +34,7 @@ LANES.forEach(lane => {
     })
 }) 
 
-const frogPos = {x: 7, y: 9}; //starting position
+const frogPos = {x: 0, y: 0}; //starting position
 
 class MyGame extends Phaser.Scene
 {
@@ -84,7 +84,7 @@ class MyGame extends Phaser.Scene
         this.spriteSheet = this.add.image(0, 0, 'spriteSheet');
 
         // Set initial position
-        this.spriteSheet.setPosition(frogPos.x * LANE_HEIGHT, frogPos.y * LANE_HEIGHT);
+        this.spriteSheet.setPosition(frogPos.x * LANE_HEIGHT + LANE_HEIGHT/2, frogPos.y * LANE_HEIGHT + LANE_HEIGHT/2);
 
          // Cursors input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -122,43 +122,43 @@ class MyGame extends Phaser.Scene
         if (Phaser.Input.Keyboard.JustDown(this.cursors.left))
          {
              frogPos.x -= 1;
-             this.spriteSheet.x = frogPos.x * LANE_HEIGHT;
+             this.spriteSheet.x = frogPos.x * LANE_HEIGHT + LANE_HEIGHT/2;
          }
          else if (Phaser.Input.Keyboard.JustDown(this.cursors.right))
          {
             frogPos.x += 1;
-            this.spriteSheet.x = frogPos.x * LANE_HEIGHT;
+            this.spriteSheet.x = frogPos.x * LANE_HEIGHT + LANE_HEIGHT/2;
          }
          if (Phaser.Input.Keyboard.JustDown(this.cursors.up))
          {
             frogPos.y -= 1;
-             this.spriteSheet.y = frogPos.y * LANE_HEIGHT;
+             this.spriteSheet.y = frogPos.y * LANE_HEIGHT + LANE_HEIGHT/2;
          }
          else if (Phaser.Input.Keyboard.JustDown(this.cursors.down))
          {
             frogPos.y += 1;
-            this.spriteSheet.y = frogPos.y * LANE_HEIGHT;
+            this.spriteSheet.y = frogPos.y * LANE_HEIGHT + LANE_HEIGHT/2;
          }
 
          // Do not exceed boundry
          if (this.spriteSheet.x < 0)
          {
-             this.spriteSheet.x = 0;
+             this.spriteSheet.x = LANE_HEIGHT/2;
              frogPos.x = 0;             
          }
          else if (this.spriteSheet.x > WIDTH)
          {
-             this.spriteSheet.x = WIDTH;
-             frogPos.x = WIDTH/LANE_HEIGHT
+             this.spriteSheet.x = WIDTH - LANE_HEIGHT/2;
+             frogPos.x = WIDTH/LANE_HEIGHT;
          }
          else if (this.spriteSheet.y < 0)
          {
-             this.spriteSheet.y = 0;
+             this.spriteSheet.y = LANE_HEIGHT/2;
              frogPos.y = 0;
          }
          else if (this.spriteSheet.y > HEIGHT)
          {
-             this.spriteSheet.y = HEIGHT;
+             this.spriteSheet.y = HEIGHT - LANE_HEIGHT/2;
              frogPos.y = HEIGHT/LANE_HEIGHT;
          }
    }
