@@ -1,6 +1,6 @@
 //To start type npm run start
 
-import Phaser from 'phaser';
+import Phaser, { LEFT } from 'phaser';
 import spriteSheetImg from './assets/Frog.png';
 
 const WIDTH = 800;
@@ -16,13 +16,13 @@ const LANES = [
    // Terrain, Speed, 
     { terrain: 'grass', speed: 50 }, //Lane 1 starting from bottom
     { terrain: 'grass', speed: 50 }, 
-    { terrain: 'road', speed: 50 }, 
-    { terrain: 'road', speed: 50 }, 
-    { terrain: 'road', speed: 50 }, 
+    { terrain: 'road', speed: 1 }, 
+    { terrain: 'road', speed: -2 }, 
+    { terrain: 'road', speed: 2 }, 
     { terrain: 'grass', speed: 50 }, 
-    { terrain: 'water', speed: 50 }, 
-    { terrain: 'water', speed: 50 }, 
-    { terrain: 'water', speed: 50 }, 
+    { terrain: 'water', speed: 2 }, 
+    { terrain: 'water', speed: -3 }, 
+    { terrain: 'water', speed: 1 }, 
     { terrain: 'lilypads', speed: 50 }, 
 ];
 
@@ -34,6 +34,7 @@ LANES.forEach(lane => {
     })
 }) 
 
+const frogPos = {x: 7, y: 9}; //starting position
 
 class MyGame extends Phaser.Scene
 {
@@ -52,12 +53,17 @@ class MyGame extends Phaser.Scene
         // Draw Lanes
         for(var laneNum in LANES){
             const lane = LANES[laneNum]
-            console.log(laneNum, lane)
 
             var color = GRASS_COLOR;
-            //var obstacleColor = ;
-            if (lane.terrain === 'water') color = WATER_COLOR;
-            if (lane.terrain === 'road') color = ROAD_COLOR;
+            var obstacleColor = null;
+            if (lane.terrain === 'water') {
+                color = WATER_COLOR;
+                obstacleColor = LOG_COLOR;
+            }
+            if (lane.terrain === 'road') {
+                color = ROAD_COLOR;
+                obstacleColor = CAR_COLOR;
+            }
 
             this.add.rectangle(WIDTH/2, HEIGHT-laneNum*LANE_HEIGHT-LANE_HEIGHT/2, WIDTH, LANE_HEIGHT, color);
 
@@ -67,7 +73,7 @@ class MyGame extends Phaser.Scene
             if(lane.obstacles) {
                 lane.obstacleRects = lane.obstacles.map((obstacle, i) =>{
                     if(!obstacle) return null
-                    return this.add.rectangle(i*LANE_HEIGHT, HEIGHT-laneNum*LANE_HEIGHT-LANE_HEIGHT/2, LANE_HEIGHT, LANE_HEIGHT, CAR_COLOR);
+                    return this.add.rectangle(i*LANE_HEIGHT, HEIGHT-laneNum*LANE_HEIGHT-LANE_HEIGHT/2, LANE_HEIGHT, LANE_HEIGHT, obstacleColor);
                 })
             }
         }
@@ -78,7 +84,7 @@ class MyGame extends Phaser.Scene
         this.spriteSheet = this.add.image(0, 0, 'spriteSheet');
 
         // Set initial position
-        this.spriteSheet.setPosition(WIDTH/2, HEIGHT/2);
+        this.spriteSheet.setPosition(frogPos.x * LANE_HEIGHT, frogPos.y * LANE_HEIGHT);
 
          // Cursors input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -96,9 +102,12 @@ class MyGame extends Phaser.Scene
 
                 lane.obstacleRects.forEach(obstacleRect => {
                     if(obstacleRect) {
-                        obstacleRect.x += 2;
+                        obstacleRect.x += lane.speed;
                         
                         //set x bounds
+                        if(obstacleRect.x < -LANE_HEIGHT) {
+                            obstacleRect.x = obstacleGroupWidth;
+                        }
                         if(obstacleRect.x > obstacleGroupWidth) {
                             obstacleRect.x = -LANE_HEIGHT;
                         }
@@ -107,44 +116,50 @@ class MyGame extends Phaser.Scene
             }
         }
 
-        //total width of obstacle group = # of obs * lane height
-        //width start at 0
-
+    
 
          // Cursor move 
-         if (this.cursors.left.isDown)
+        if (Phaser.Input.Keyboard.JustDown(this.cursors.left))
          {
-             this.spriteSheet.x -= 16;
+             frogPos.x -= 1;
+             this.spriteSheet.x = frogPos.x * LANE_HEIGHT;
          }
-         else if (this.cursors.right.isDown)
+         else if (Phaser.Input.Keyboard.JustDown(this.cursors.right))
          {
-             this.spriteSheet.x += 16;
+            frogPos.x += 1;
+            this.spriteSheet.x = frogPos.x * LANE_HEIGHT;
          }
-         if (this.cursors.up.isDown)
+         if (Phaser.Input.Keyboard.JustDown(this.cursors.up))
          {
-             this.spriteSheet.y -= 16;
+            frogPos.y -= 1;
+             this.spriteSheet.y = frogPos.y * LANE_HEIGHT;
          }
-         else if (this.cursors.down.isDown)
+         else if (Phaser.Input.Keyboard.JustDown(this.cursors.down))
          {
-             this.spriteSheet.y += 16;
+            frogPos.y += 1;
+            this.spriteSheet.y = frogPos.y * LANE_HEIGHT;
          }
 
          // Do not exceed boundry
          if (this.spriteSheet.x < 0)
          {
-             this.logo.x = 0;
+             this.spriteSheet.x = 0;
+             frogPos.x = 0;             
          }
          else if (this.spriteSheet.x > WIDTH)
          {
              this.spriteSheet.x = WIDTH;
+             frogPos.x = WIDTH/LANE_HEIGHT
          }
          else if (this.spriteSheet.y < 0)
          {
              this.spriteSheet.y = 0;
+             frogPos.y = 0;
          }
          else if (this.spriteSheet.y > HEIGHT)
          {
              this.spriteSheet.y = HEIGHT;
+             frogPos.y = HEIGHT/LANE_HEIGHT;
          }
    }
 }
