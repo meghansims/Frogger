@@ -1,11 +1,17 @@
 //To start type npm run start
 
+/* TO DO
+    - Make cars barriers and rode not
+    - Make logs platforms and water bad
+    - Lives and game over
+*/
+
 import Phaser, { LEFT } from 'phaser';
 import spriteSheetImg from './assets/Frog.png';
 
-const WIDTH = 800;
-const HEIGHT = 500;
 const LANE_HEIGHT = 50;
+const WIDTH = 800;
+const HEIGHT = 10 * LANE_HEIGHT;
 const WATER_COLOR = 0x0000ff;
 const ROAD_COLOR = 0x303030;
 const GRASS_COLOR = 0x00ff00;
@@ -34,7 +40,7 @@ LANES.forEach(lane => {
     })
 }) 
 
-const frogPos = {x: 0, y: 0}; //starting position
+const frogPos = {x: WIDTH / LANE_HEIGHT / 2 - 1, y: HEIGHT / LANE_HEIGHT}; //starting position
 
 class MyGame extends Phaser.Scene
 {
@@ -79,12 +85,12 @@ class MyGame extends Phaser.Scene
         }
               
 
-
         // Add image
-        this.spriteSheet = this.add.image(0, 0, 'spriteSheet');
+        this.frogSprite = this.add.image(0, 0, 'spriteSheet');
 
         // Set initial position
-        this.spriteSheet.setPosition(frogPos.x * LANE_HEIGHT + LANE_HEIGHT/2, frogPos.y * LANE_HEIGHT + LANE_HEIGHT/2);
+        this.frogSprite.setPosition(frogPos.x * LANE_HEIGHT + LANE_HEIGHT/2, frogPos.y * LANE_HEIGHT + LANE_HEIGHT/2);
+        this.frogSprite.rotation = 180 * Math.PI / 180;
 
          // Cursors input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -122,44 +128,48 @@ class MyGame extends Phaser.Scene
         if (Phaser.Input.Keyboard.JustDown(this.cursors.left))
          {
              frogPos.x -= 1;
-             this.spriteSheet.x = frogPos.x * LANE_HEIGHT + LANE_HEIGHT/2;
+             this.frogSprite.x = frogPos.x * LANE_HEIGHT + LANE_HEIGHT/2;
+             this.frogSprite.rotation = 90 * Math.PI / 180;
          }
          else if (Phaser.Input.Keyboard.JustDown(this.cursors.right))
          {
             frogPos.x += 1;
-            this.spriteSheet.x = frogPos.x * LANE_HEIGHT + LANE_HEIGHT/2;
+            this.frogSprite.x = frogPos.x * LANE_HEIGHT + LANE_HEIGHT/2;
+            this.frogSprite.rotation = 270 * Math.PI / 180;
          }
          if (Phaser.Input.Keyboard.JustDown(this.cursors.up))
          {
             frogPos.y -= 1;
-             this.spriteSheet.y = frogPos.y * LANE_HEIGHT + LANE_HEIGHT/2;
+             this.frogSprite.y = frogPos.y * LANE_HEIGHT + LANE_HEIGHT/2;
+             this.frogSprite.rotation = 180 * Math.PI / 180;
          }
          else if (Phaser.Input.Keyboard.JustDown(this.cursors.down))
          {
             frogPos.y += 1;
-            this.spriteSheet.y = frogPos.y * LANE_HEIGHT + LANE_HEIGHT/2;
-         }
+            this.frogSprite.y = frogPos.y * LANE_HEIGHT + LANE_HEIGHT/2;
+            this.frogSprite.rotation = 0 * Math.PI / 180;
+        }
 
          // Do not exceed boundry
-         if (this.spriteSheet.x < 0)
+         if (this.frogSprite.x < 0)
          {
-             this.spriteSheet.x = LANE_HEIGHT/2;
-             frogPos.x = 0;             
+             this.frogSprite.x = LANE_HEIGHT/2;
+             frogPos.x = 0; 
          }
-         else if (this.spriteSheet.x > WIDTH)
+         else if (this.frogSprite.x > WIDTH)
          {
-             this.spriteSheet.x = WIDTH - LANE_HEIGHT/2;
-             frogPos.x = WIDTH/LANE_HEIGHT;
+             this.frogSprite.x = WIDTH - LANE_HEIGHT/2;
+             frogPos.x = WIDTH/LANE_HEIGHT - 1;
          }
-         else if (this.spriteSheet.y < 0)
+         else if (this.frogSprite.y < 0)
          {
-             this.spriteSheet.y = LANE_HEIGHT/2;
+             this.frogSprite.y = LANE_HEIGHT/2;
              frogPos.y = 0;
          }
-         else if (this.spriteSheet.y > HEIGHT)
+         else if (this.frogSprite.y > HEIGHT)
          {
-             this.spriteSheet.y = HEIGHT - LANE_HEIGHT/2;
-             frogPos.y = HEIGHT/LANE_HEIGHT;
+             this.frogSprite.y = HEIGHT - LANE_HEIGHT/2;
+             frogPos.y = HEIGHT/LANE_HEIGHT - 1;
          }
    }
 }
